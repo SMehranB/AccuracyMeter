@@ -1,0 +1,3 @@
+include ':AccuracyMeter'
+include ':app'
+rootProject.name = "AccuracyMeterSample"
