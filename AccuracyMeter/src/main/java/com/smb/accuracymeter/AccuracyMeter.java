@@ -35,10 +35,10 @@ public class AccuracyMeter extends View {
     private LinearGradient backgroundGradient = null;
 
     private float[] totalLinesPoints;
-    public int totalLinesCount = 30;
-    public int progress = 0;
-    public float lineWidth = dpToPixel(8);
+    public int totalLinesCount = 50;
+    public float lineWidth = dpToPixel(5);
     public float innerPadding = dpToPixel(8);
+    public int progress = 0;
 
     public float backgroundAlpha = 0.5f;
 
@@ -73,9 +73,9 @@ public class AccuracyMeter extends View {
 
         TypedArray attrs = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.AccuracyMeter, 0, 0);
 
-        totalLinesCount = attrs.getInt(R.styleable.AccuracyMeter_am_linesCount, 30);
-        lineWidth = attrs.getDimension(R.styleable.AccuracyMeter_am_linesWidth, dpToPixel(8));
-        animationDuration = (long) attrs.getInt(R.styleable.AccuracyMeter_am_animationDuration, 1000);
+        totalLinesCount = attrs.getInt(R.styleable.AccuracyMeter_am_linesCount, 50);
+        lineWidth = attrs.getDimension(R.styleable.AccuracyMeter_am_linesWidth, dpToPixel(5));
+        animationDuration = attrs.getInt(R.styleable.AccuracyMeter_am_animationDuration, 1000);
 
         percentageEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_percentageEnabled, true);
         textSize = attrs.getDimension(R.styleable.AccuracyMeter_am_textSize, dpToPixel(16));
@@ -157,20 +157,18 @@ public class AccuracyMeter extends View {
 
     private Path setLimitIndicatorParams(float limit) {
 
-
         limitIndicatorPaint.setStyle(Paint.Style.STROKE);
         limitIndicatorPaint.setColor(limiterColor);
         limitIndicatorPaint.setStrokeCap(Paint.Cap.ROUND);
         limitIndicatorPaint.setStrokeJoin(Paint.Join.ROUND);
         limitIndicatorPaint.setStrokeWidth(dpToPixel(2));
 
-        float xStart = getWidth() - dpToPixel(5);
+        float xStart = totalLinesPoints[totalLinesPoints.length - 4] + lineWidth / 2;
         float yStart = textY - textHeight + dpToPixel(5);
-
-        float meterWidth = getWidth() - dpToPixel(5) * 2;
-
-        float limiterLength = ((100f - limit) * meterWidth / 100f) + innerPadding * 2;
         float limiterDepth = dpToPixel(5);
+
+        int limiterLineXIndex = ((int) (Math.ceil((100 - limit) * totalLinesCount / 100) - 1) * 4);
+        float limiterLength = totalLinesPoints[limiterLineXIndex] + lineWidth;
 
         Path limitIndicatorPath = new Path();
 
