@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.text.TextPaint;
@@ -21,8 +22,14 @@ import androidx.core.graphics.ColorUtils;
 
 public class AccuracyMeter extends View {
 
+
+    enum TextPosition { BOTTOM_LEFT, BOTTOM_RIGHT;}
+
+
+
     private final Paint linesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint linesBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint limitIndicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG | TextPaint.SUBPIXEL_TEXT_FLAG);
     private LinearGradient mainGradient = null;
     private LinearGradient backgroundGradient = null;
@@ -37,6 +44,10 @@ public class AccuracyMeter extends View {
 
     public long animationDuration = 1000;
 
+    public boolean limitIndicatorEnabled = true;
+    public float limitIndicatorPercentage = 70;
+    public int limiterColor = Color.BLACK;
+
     private float textX = 0f;
     private float textY = 0f;
     private float textHeight = 0f;
@@ -46,7 +57,7 @@ public class AccuracyMeter extends View {
     public int textStyle = 0;
     public int fontFamily = 0;
     public int textColor = Color.BLACK;
-    public int textPosition = 0; //bottom_left
+    public TextPosition textPosition = TextPosition.BOTTOM_LEFT;
 
     public AccuracyMeter(Context context) {
         super(context);
@@ -71,18 +82,27 @@ public class AccuracyMeter extends View {
         textStyle = attrs.getInt(R.styleable.AccuracyMeter_am_textStyle, Typeface.NORMAL);
         fontFamily = attrs.getResourceId(R.styleable.AccuracyMeter_am_textFont, 0);
         textColor = attrs.getInteger(R.styleable.AccuracyMeter_am_textColor, Color.BLACK);
-        textPosition = attrs.getInt(R.styleable.AccuracyMeter_am_textPosition, 0);
+        textPosition = getTextPosition(attrs.getInt(R.styleable.AccuracyMeter_am_textPosition, 0));
 
         backgroundAlpha = Math.min(attrs.getFloat(R.styleable.AccuracyMeter_am_backgroundAlpha, 0.5f), 1f);
 
+        limitIndicatorEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_limitIndicatorEnabled, true);
+        limiterColor = attrs.getInteger(R.styleable.AccuracyMeter_am_limitIndicatorColor, Color.BLACK);
+        limitIndicatorPercentage = attrs.getFloat(R.styleable.AccuracyMeter_am_limitIndicatorValue, 70f);
 
         attrs.recycle();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+
         canvas.drawLines(totalLinesPoints, linesBackgroundPaint);
         canvas.drawLines(totalLinesPoints, 0, progress * 4, linesPaint);
+
+        Path limiterPath = setLimitIndicatorParams(limitIndicatorPercentage);
+        canvas.drawPath(limiterPath, limitIndicatorPaint);
+
         if (percentageEnabled) {
             canvas.drawText(text, textX, textY, textPaint);
         }
@@ -135,11 +155,38 @@ public class AccuracyMeter extends View {
         super.onLayout(changed, left, top, right, bottom);
     }
 
+    private Path setLimitIndicatorParams(float limit) {
+
+
+        limitIndicatorPaint.setStyle(Paint.Style.STROKE);
+        limitIndicatorPaint.setColor(limiterColor);
+        limitIndicatorPaint.setStrokeCap(Paint.Cap.ROUND);
+        limitIndicatorPaint.setStrokeJoin(Paint.Join.ROUND);
+        limitIndicatorPaint.setStrokeWidth(dpToPixel(2));
+
+        float xStart = getWidth() - dpToPixel(5);
+        float yStart = textY - textHeight + dpToPixel(5);
+
+        float meterWidth = getWidth() - dpToPixel(5) * 2;
+
+        float limiterLength = ((100f - limit) * meterWidth / 100f) + innerPadding * 2;
+        float limiterDepth = dpToPixel(5);
+
+        Path limitIndicatorPath = new Path();
+
+        limitIndicatorPath.moveTo(xStart, yStart);
+        limitIndicatorPath.lineTo(xStart, yStart + limiterDepth);
+        limitIndicatorPath.lineTo(xStart - limiterLength, yStart + limiterDepth);
+        limitIndicatorPath.lineTo(xStart - limiterLength, yStart);
+
+        return limitIndicatorPath;
+    }
+
     public void animateProgressTo(float percentage) {
 
         percentage = Math.min(percentage, 100);
 
-        ValueAnimator progressAnimation = ValueAnimator.ofFloat(0, percentage);
+        ValueAnimator progressAnimation = ValueAnimator.ofFloat( progress * 100f / totalLinesCount, percentage);
         progressAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -162,6 +209,20 @@ public class AccuracyMeter extends View {
         progress = 0;
 
         invalidate();
+    }
+
+    private TextPosition getTextPosition(int pos) {
+
+        switch (pos) {
+            case 0: {
+                return TextPosition.BOTTOM_LEFT;
+            }
+            case 1: {
+                return TextPosition.BOTTOM_RIGHT;
+            }
+        }
+
+        return TextPosition.BOTTOM_LEFT;
     }
 
     private float[] getLinesPoints(int linesCount) {
@@ -191,12 +252,12 @@ public class AccuracyMeter extends View {
     private void setTextPosition() {
 
         switch (textPosition) {
-            case 0:{ //BOTTOM_LEFT
+            case BOTTOM_LEFT:{ //BOTTOM_LEFT
                 textX = innerPadding;
                 textY = getHeight() - innerPadding;
                 break;
             }
-            case 1:{ //BOTTOM_RIGHT
+            case BOTTOM_RIGHT:{ //BOTTOM_RIGHT
                 textX = getWidth() - innerPadding - textPaint.measureText("100%");
                 textY = getHeight() - innerPadding;
                 break;
@@ -209,7 +270,7 @@ public class AccuracyMeter extends View {
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);
         textPaint.setTypeface(Typeface.defaultFromStyle(textStyle));
-//        textPaint.setShadowLayer(10f, 15f, 15f, Color.GRAY);
+
         if (fontFamily != 0) {
             Typeface font = ResourcesCompat.getFont(getContext(), fontFamily);
             textPaint.setTypeface(Typeface.create(font, textStyle));

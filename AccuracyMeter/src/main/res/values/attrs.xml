@@ -23,6 +23,11 @@
         <attr name="am_animationDuration" format="integer" />
 
         <attr name="am_backgroundAlpha" format="float" />
+
+        <attr name="am_limitIndicatorEnabled" format="boolean" />
+        <attr name="am_limitIndicatorColor" format="color" />
+        <attr name="am_limitIndicatorValue" format="float" />
+
     </declare-styleable>
 
 </resources>
