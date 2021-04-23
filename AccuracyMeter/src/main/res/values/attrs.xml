@@ -3,7 +3,7 @@
 
     <declare-styleable name="AccuracyMeter">
 
-        <attr name="am_percentageEnabled" format="boolean"/>
+        <attr name="am_ProgressTextEnabled" format="boolean"/>
         <attr name="am_text" format="string"/>
         <attr name="am_textSize" format="dimension"/>
         <attr name="am_textColor" format="color"/>
@@ -24,9 +24,9 @@
 
         <attr name="am_backgroundAlpha" format="float" />
 
-        <attr name="am_limitIndicatorEnabled" format="boolean" />
-        <attr name="am_limitIndicatorColor" format="color" />
-        <attr name="am_limitIndicatorValue" format="float" />
+        <attr name="am_ThresholdIndicatorEnabled" format="boolean" />
+        <attr name="am_ThresholdIndicatorColor" format="color" />
+        <attr name="am_Threshold" format="float" />
 
     </declare-styleable>
 

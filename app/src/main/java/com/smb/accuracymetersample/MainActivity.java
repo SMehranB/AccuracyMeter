@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     Button button3;
     Button button4;
     Button buttonReset;
+    Button buttonIncreaseThreshold;
+    Button buttonDecreaseThreshold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +40,23 @@ public class MainActivity extends AppCompatActivity {
         button3 = findViewById(R.id.btnAnimate75);
         button4 = findViewById(R.id.btnAnimate100);
         buttonReset = findViewById(R.id.btnReset);
+        buttonIncreaseThreshold = findViewById(R.id.btnIncreaseThreshold);
+        buttonDecreaseThreshold = findViewById(R.id.btnDecreaseThreshold);
 
         AccuracyMeter accuracyMeter = new AccuracyMeter(this);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         accuracyMeter.setLayoutParams(params);
-        accuracyMeter.percentageEnabled = true;
-        accuracyMeter.limitIndicatorEnabled = true;
-        accuracyMeter.setLimiterColor(Color.YELLOW);
+        accuracyMeter.ProgressTextEnabled = true;
+        accuracyMeter.thresholdEnabled = true;
+        accuracyMeter.setThresholdIndicatorColor(Color.YELLOW);
         accuracyMeter.setTextColor(Color.YELLOW);
         accuracyMeter.setTextPosition(AccuracyMeter.TextPosition.BOTTOM_LEFT);
         accuracyMeter.setTextSizeDp(24);
-        accuracyMeter.setTotalLinesCount(100);
+        accuracyMeter.setLineCount(100);
         accuracyMeter.setLineWidthDp(2);
         accuracyMeter.setAnimationDuration(500);
-        accuracyMeter.setLimitIndicatorPercentage(95);
+        accuracyMeter.setThreshold(95);
         accuracyMeter.setTextStyle(Typeface.ITALIC);
         accuracyMeter.setBackgroundAlpha(0.5f);
 
@@ -64,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
         meters.add(am2);
         meters.add(am3);
         meters.add(accuracyMeter);
+
+        buttonIncreaseThreshold.setOnClickListener(view -> {
+            for (int i = 0; i < meters.size(); i++) {
+                meters.get(i).animateThresholdIndicatorTo(meters.get(i).getThreshold() - 5);
+            }
+        });
+
+        buttonDecreaseThreshold.setOnClickListener(view -> {
+            for (int i = 0; i < meters.size(); i++) {
+                meters.get(i).animateThresholdIndicatorTo(meters.get(i).getThreshold() + 5);
+            }
+        });
 
         button1.setOnClickListener(view ->{
             for (int i = 0; i < meters.size(); i++) {

@@ -31,7 +31,7 @@ public class AccuracyMeter extends View {
     private LinearGradient mainGradient = null;
     private LinearGradient backgroundGradient = null;
 
-    private float[] totalLinesPoints;
+    private float[] linesPoints;
     private final float innerPadding = dpToPixel(8);
     public int totalLinesCount = 50;
     public float lineWidth = dpToPixel(5);
@@ -41,15 +41,15 @@ public class AccuracyMeter extends View {
 
     public long animationDuration = 1000;
 
-    public boolean limitIndicatorEnabled = true;
-    public float limitIndicatorPercentage = 70;
-    public int limiterColor = Color.BLACK;
+    public boolean thresholdEnabled = true;
+    public float threshold = 70;
+    public int thresholdIndicatorColor = Color.BLACK;
 
     private float textX = 0f;
     private float textY = 0f;
     private float textHeight = 0f;
     private String text = "0%";
-    public boolean percentageEnabled = true;
+    public boolean ProgressTextEnabled = true;
     public float textSize = dpToPixel(16);
     public int textStyle = 0;
     public int fontFamily = 0;
@@ -74,7 +74,7 @@ public class AccuracyMeter extends View {
         lineWidth = attrs.getDimension(R.styleable.AccuracyMeter_am_linesWidth, dpToPixel(5));
         animationDuration = attrs.getInt(R.styleable.AccuracyMeter_am_animationDuration, 1000);
 
-        percentageEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_percentageEnabled, true);
+        ProgressTextEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_ProgressTextEnabled, true);
         textSize = attrs.getDimension(R.styleable.AccuracyMeter_am_textSize, dpToPixel(16));
         textStyle = attrs.getInt(R.styleable.AccuracyMeter_am_textStyle, Typeface.NORMAL);
         fontFamily = attrs.getResourceId(R.styleable.AccuracyMeter_am_textFont, 0);
@@ -83,9 +83,9 @@ public class AccuracyMeter extends View {
 
         backgroundAlpha = Math.min(attrs.getFloat(R.styleable.AccuracyMeter_am_backgroundAlpha, 0.5f), 1f);
 
-        limitIndicatorEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_limitIndicatorEnabled, true);
-        limiterColor = attrs.getInteger(R.styleable.AccuracyMeter_am_limitIndicatorColor, Color.BLACK);
-        limitIndicatorPercentage = attrs.getFloat(R.styleable.AccuracyMeter_am_limitIndicatorValue, 70f);
+        thresholdEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_ThresholdIndicatorEnabled, true);
+        thresholdIndicatorColor = attrs.getInteger(R.styleable.AccuracyMeter_am_ThresholdIndicatorColor, Color.BLACK);
+        threshold = attrs.getFloat(R.styleable.AccuracyMeter_am_Threshold, 70f);
 
         attrs.recycle();
     }
@@ -93,15 +93,15 @@ public class AccuracyMeter extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        canvas.drawLines(totalLinesPoints, linesBackgroundPaint);
-        canvas.drawLines(totalLinesPoints, 0, progress * 4, linesPaint);
+        canvas.drawLines(linesPoints, linesBackgroundPaint);
+        canvas.drawLines(linesPoints, 0, progress * 4, linesPaint);
 
-        if (limitIndicatorEnabled) {
-            Path limiterPath = setLimitIndicatorParams(limitIndicatorPercentage);
+        if (thresholdEnabled) {
+            Path limiterPath = getThresholdPath(threshold);
             canvas.drawPath(limiterPath, limitIndicatorPaint);
         }
 
-        if (percentageEnabled) {
+        if (ProgressTextEnabled) {
             canvas.drawText(text, textX, textY, textPaint);
         }
     }
@@ -148,32 +148,32 @@ public class AccuracyMeter extends View {
         setTextParams();
         setTextPosition();
 
-        totalLinesPoints = getLinesPoints(totalLinesCount);
+        linesPoints = getLinesPoints(totalLinesCount);
 
         super.onLayout(changed, left, top, right, bottom);
     }
 
-    private Path setLimitIndicatorParams(float limit) {
+    private Path getThresholdPath(float limit) {
 
         limitIndicatorPaint.setStyle(Paint.Style.STROKE);
-        limitIndicatorPaint.setColor(limiterColor);
+        limitIndicatorPaint.setColor(thresholdIndicatorColor);
         limitIndicatorPaint.setStrokeCap(Paint.Cap.ROUND);
         limitIndicatorPaint.setStrokeJoin(Paint.Join.ROUND);
         limitIndicatorPaint.setStrokeWidth(dpToPixel(2));
 
-        float xStart = totalLinesPoints[totalLinesPoints.length - 4] + lineWidth / 2;
+        float xStart = linesPoints[linesPoints.length - 4] + lineWidth / 2;
         float yStart = textY - textHeight + dpToPixel(5);
-        float limiterDepth = dpToPixel(5);
+        float indicatorDepth = dpToPixel(5);
 
-        int limiterLineXIndex = ((int) (Math.ceil((100 - limit) * totalLinesCount / 100) - 1) * 4);
-        float limiterLength = totalLinesPoints[limiterLineXIndex] + lineWidth;
+        int indicatorLineXIndex = Math.max((int) (Math.ceil((100 - limit) * totalLinesCount / 100) - 1) * 4, 0);
+        float indicatorLength = linesPoints[indicatorLineXIndex] + lineWidth;
 
         Path limitIndicatorPath = new Path();
 
         limitIndicatorPath.moveTo(xStart, yStart);
-        limitIndicatorPath.lineTo(xStart, yStart + limiterDepth);
-        limitIndicatorPath.lineTo(xStart - limiterLength, yStart + limiterDepth);
-        limitIndicatorPath.lineTo(xStart - limiterLength, yStart);
+        limitIndicatorPath.lineTo(xStart, yStart + indicatorDepth);
+        limitIndicatorPath.lineTo(xStart - indicatorLength, yStart + indicatorDepth);
+        limitIndicatorPath.lineTo(xStart - indicatorLength, yStart);
 
         return limitIndicatorPath;
     }
@@ -194,6 +194,24 @@ public class AccuracyMeter extends View {
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(progressAnimation);
         animatorSet.setInterpolator(new DecelerateInterpolator());
+        animatorSet.start();
+    }
+
+    public void animateThresholdIndicatorTo(float newThreshold){
+
+        newThreshold = Math.min(newThreshold, 100);
+        newThreshold = Math.max(newThreshold, 1);
+
+        ValueAnimator thresholdAnimation = ValueAnimator.ofFloat(threshold, newThreshold);
+        thresholdAnimation.addUpdateListener(valueAnimator -> {
+            threshold = (float) valueAnimator.getAnimatedValue();
+            invalidate();
+        });
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.setInterpolator(new DecelerateInterpolator());
+        animatorSet.setDuration(500);
+        animatorSet.play(thresholdAnimation);
         animatorSet.start();
     }
 
@@ -269,7 +287,7 @@ public class AccuracyMeter extends View {
             textPaint.setTypeface(Typeface.create(font, textStyle));
         }
 
-        if (percentageEnabled) {
+        if (ProgressTextEnabled) {
             textHeight = innerPadding + textPaint.descent() - textPaint.ascent();
         }
     }
@@ -295,17 +313,17 @@ public class AccuracyMeter extends View {
         return dp * getResources().getDisplayMetrics().density;
     }
 
-    public int getTotalLinesCount() {
+    public int getLineCount() {
         return totalLinesCount;
     }
 
-    public void setTotalLinesCount(int totalLinesCount) {
+    public void setLineCount(int totalLinesCount) {
         this.totalLinesCount = totalLinesCount;
         requestLayout();
     }
 
-    public float getLineWidth() {
-        return lineWidth;
+    public float getLineWidthDp() {
+        return lineWidth / getResources().getDisplayMetrics().density;
     }
 
     public void setLineWidthDp(int lineWidth) {
@@ -339,43 +357,43 @@ public class AccuracyMeter extends View {
         this.animationDuration = animationDuration;
     }
 
-    public boolean isLimitIndicatorEnabled() {
-        return limitIndicatorEnabled;
+    public boolean isThresholdRangeEnabled() {
+        return thresholdEnabled;
     }
 
-    public void setLimitIndicatorEnabled(boolean limitIndicatorEnabled) {
-        this.limitIndicatorEnabled = limitIndicatorEnabled;
+    public void setThresholdRangeEnabled(boolean limitIndicatorEnabled) {
+        this.thresholdEnabled = limitIndicatorEnabled;
         invalidate();
     }
 
-    public float getLimitIndicatorPercentage() {
-        return limitIndicatorPercentage;
+    public float getThreshold() {
+        return threshold;
     }
 
-    public void setLimitIndicatorPercentage(float limitIndicatorPercentage) {
-        this.limitIndicatorPercentage = limitIndicatorPercentage;
+    public void setThreshold(float limitIndicatorPercentage) {
+        this.threshold = limitIndicatorPercentage;
         invalidate();
     }
 
-    public int getLimiterColor() {
-        return limiterColor;
+    public int getThresholdIndicatorColor() {
+        return thresholdIndicatorColor;
     }
 
-    public void setLimiterColor(int limiterColor) {
-        this.limiterColor = limiterColor;
+    public void setThresholdIndicatorColor(int limiterColor) {
+        this.thresholdIndicatorColor = limiterColor;
         invalidate();
     }
 
-    public boolean isPercentageEnabled() {
-        return percentageEnabled;
+    public boolean isProgressTextEnabled() {
+        return ProgressTextEnabled;
     }
 
-    public void setPercentageEnabled(boolean percentageEnabled) {
-        this.percentageEnabled = percentageEnabled;
+    public void setProgressTextEnabled(boolean percentageEnabled) {
+        this.ProgressTextEnabled = percentageEnabled;
         invalidate();
     }
 
-    public float getTextSize() {
+    public float getTextSizeDp() {
         return textSize / getResources().getDisplayMetrics().density;
     }
 

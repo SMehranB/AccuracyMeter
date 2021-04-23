@@ -25,16 +25,10 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="8dp"
                 app:am_animationDuration="2000"
-                app:am_limitIndicatorColor="@color/white"
-                app:am_limitIndicatorEnabled="false"
-                app:am_limitIndicatorValue="75"
                 app:am_linesCount="100"
                 app:am_linesWidth="5dp"
-                app:am_percentageEnabled="false"
-                app:am_textColor="@color/white"
-                app:am_textPosition="BOTTOM_RIGHT"
-                app:am_textSize="24dp"
-                app:am_textStyle="bold" />
+                app:am_ThresholdIndicatorEnabled="false"
+                app:am_ProgressTextEnabled="false"/>
 
             <com.smb.accuracymeter.AccuracyMeter
                 android:id="@+id/am2"
@@ -43,9 +37,8 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="8dp"
                 app:am_animationDuration="2000"
-                app:am_limitIndicatorColor="@color/white"
-                app:am_limitIndicatorEnabled="false"
-                app:am_limitIndicatorValue="75"
+                app:am_ThresholdIndicatorEnabled="false"
+                app:am_Threshold="75"
                 app:am_linesCount="25"
                 app:am_linesWidth="10dp"
                 app:am_textColor="@color/white"
@@ -60,8 +53,8 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="8dp"
                 app:am_animationDuration="1000"
-                app:am_limitIndicatorColor="#41FFF9"
-                app:am_limitIndicatorValue="50"
+                app:am_ThresholdIndicatorColor="#41FFF9"
+                app:am_Threshold="50"
                 app:am_textColor="#41FFF9"
                 app:am_textPosition="BOTTOM_RIGHT"
                 app:am_textSize="16dp"
@@ -124,16 +117,24 @@
             app:layout_constraintTop_toBottomOf="@+id/btnAnimate50" />
 
         <Button
-            android:id="@+id/btnChangeLimit"
+            android:id="@+id/btnIncreaseThreshold"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
-            android:text="Change\nLimit"
+            android:text="Change +"
             android:textAllCaps="false"
-            app:layout_constraintBottom_toTopOf="@+id/btnReset"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnAnimate50"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnDecreaseThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:text="Change -"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toEndOf="@+id/btnAnimate50"
+            app:layout_constraintTop_toBottomOf="@+id/btnIncreaseThreshold" />
 
 
         <Button
