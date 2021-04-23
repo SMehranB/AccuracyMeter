@@ -22,10 +22,7 @@ import androidx.core.graphics.ColorUtils;
 
 public class AccuracyMeter extends View {
 
-
-    enum TextPosition { BOTTOM_LEFT, BOTTOM_RIGHT;}
-
-
+    public enum TextPosition { BOTTOM_LEFT, BOTTOM_RIGHT;}
 
     private final Paint linesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint linesBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -35,9 +32,9 @@ public class AccuracyMeter extends View {
     private LinearGradient backgroundGradient = null;
 
     private float[] totalLinesPoints;
+    private final float innerPadding = dpToPixel(8);
     public int totalLinesCount = 50;
     public float lineWidth = dpToPixel(5);
-    public float innerPadding = dpToPixel(8);
     public int progress = 0;
 
     public float backgroundAlpha = 0.5f;
@@ -96,12 +93,13 @@ public class AccuracyMeter extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-
         canvas.drawLines(totalLinesPoints, linesBackgroundPaint);
         canvas.drawLines(totalLinesPoints, 0, progress * 4, linesPaint);
 
-        Path limiterPath = setLimitIndicatorParams(limitIndicatorPercentage);
-        canvas.drawPath(limiterPath, limitIndicatorPaint);
+        if (limitIndicatorEnabled) {
+            Path limiterPath = setLimitIndicatorParams(limitIndicatorPercentage);
+            canvas.drawPath(limiterPath, limitIndicatorPaint);
+        }
 
         if (percentageEnabled) {
             canvas.drawText(text, textX, textY, textPaint);
@@ -185,14 +183,11 @@ public class AccuracyMeter extends View {
         percentage = Math.min(percentage, 100);
 
         ValueAnimator progressAnimation = ValueAnimator.ofFloat( progress * 100f / totalLinesCount, percentage);
-        progressAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float val = (float) valueAnimator.getAnimatedValue();
-                progress = Math.min(totalLinesCount, (int) (val * totalLinesCount / 100));
-                text = (int) val + "%";
-                invalidate();
-            }
+        progressAnimation.addUpdateListener(valueAnimator -> {
+            float val = (float) valueAnimator.getAnimatedValue();
+            progress = Math.min(totalLinesCount, (int) (val * totalLinesCount / 100));
+            text = (int) val + "%";
+            invalidate();
         });
         progressAnimation.setDuration(animationDuration);
 
@@ -298,5 +293,130 @@ public class AccuracyMeter extends View {
 
     private float dpToPixel(int dp) {
         return dp * getResources().getDisplayMetrics().density;
+    }
+
+    public int getTotalLinesCount() {
+        return totalLinesCount;
+    }
+
+    public void setTotalLinesCount(int totalLinesCount) {
+        this.totalLinesCount = totalLinesCount;
+        requestLayout();
+    }
+
+    public float getLineWidth() {
+        return lineWidth;
+    }
+
+    public void setLineWidthDp(int lineWidth) {
+        this.lineWidth = dpToPixel(lineWidth);
+        invalidate();
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+        invalidate();
+    }
+
+    public float getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    public void setBackgroundAlpha(float backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
+        invalidate();
+    }
+
+    public long getAnimationDuration() {
+        return animationDuration;
+    }
+
+    public void setAnimationDuration(long animationDuration) {
+        this.animationDuration = animationDuration;
+    }
+
+    public boolean isLimitIndicatorEnabled() {
+        return limitIndicatorEnabled;
+    }
+
+    public void setLimitIndicatorEnabled(boolean limitIndicatorEnabled) {
+        this.limitIndicatorEnabled = limitIndicatorEnabled;
+        invalidate();
+    }
+
+    public float getLimitIndicatorPercentage() {
+        return limitIndicatorPercentage;
+    }
+
+    public void setLimitIndicatorPercentage(float limitIndicatorPercentage) {
+        this.limitIndicatorPercentage = limitIndicatorPercentage;
+        invalidate();
+    }
+
+    public int getLimiterColor() {
+        return limiterColor;
+    }
+
+    public void setLimiterColor(int limiterColor) {
+        this.limiterColor = limiterColor;
+        invalidate();
+    }
+
+    public boolean isPercentageEnabled() {
+        return percentageEnabled;
+    }
+
+    public void setPercentageEnabled(boolean percentageEnabled) {
+        this.percentageEnabled = percentageEnabled;
+        invalidate();
+    }
+
+    public float getTextSize() {
+        return textSize / getResources().getDisplayMetrics().density;
+    }
+
+    public void setTextSizeDp(int textSize) {
+        this.textSize = dpToPixel(textSize);
+        requestLayout();
+    }
+
+    public int getTextStyle() {
+        return textStyle;
+    }
+
+    public void setTextStyle(int textStyle) {
+        this.textStyle = textStyle;
+        requestLayout();
+    }
+
+    public int getFontFamily() {
+        return fontFamily;
+    }
+
+    public void setFontFamily(int fontFamily) {
+        this.fontFamily = fontFamily;
+        requestLayout();
+    }
+
+    public int getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
+        invalidate();
+    }
+
+    public TextPosition getTextPosition() {
+        return textPosition;
+    }
+
+    public void setTextPosition(TextPosition textPosition) {
+        this.textPosition = textPosition;
+        invalidate();
     }
 }

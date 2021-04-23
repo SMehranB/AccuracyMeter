@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="#171717"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -13,6 +13,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/viewHolder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -20,14 +21,50 @@
             <com.smb.accuracymeter.AccuracyMeter
                 android:id="@+id/am"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="75dp"
                 android:layout_marginHorizontal="8dp"
-                android:layout_marginVertical="8dp"
+                android:layout_marginTop="8dp"
+                app:am_animationDuration="2000"
                 app:am_limitIndicatorColor="@color/white"
-                app:am_limitIndicatorValue="95"
+                app:am_limitIndicatorEnabled="false"
+                app:am_limitIndicatorValue="75"
+                app:am_linesCount="100"
+                app:am_linesWidth="5dp"
+                app:am_percentageEnabled="false"
                 app:am_textColor="@color/white"
                 app:am_textPosition="BOTTOM_RIGHT"
                 app:am_textSize="24dp"
+                app:am_textStyle="bold" />
+
+            <com.smb.accuracymeter.AccuracyMeter
+                android:id="@+id/am2"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="8dp"
+                app:am_animationDuration="2000"
+                app:am_limitIndicatorColor="@color/white"
+                app:am_limitIndicatorEnabled="false"
+                app:am_limitIndicatorValue="75"
+                app:am_linesCount="25"
+                app:am_linesWidth="10dp"
+                app:am_textColor="@color/white"
+                app:am_textPosition="BOTTOM_RIGHT"
+                app:am_textSize="24dp"
+                app:am_textStyle="bold" />
+
+            <com.smb.accuracymeter.AccuracyMeter
+                android:id="@+id/am3"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="8dp"
+                app:am_animationDuration="1000"
+                app:am_limitIndicatorColor="#41FFF9"
+                app:am_limitIndicatorValue="50"
+                app:am_textColor="#41FFF9"
+                app:am_textPosition="BOTTOM_RIGHT"
+                app:am_textSize="16dp"
                 app:am_textStyle="bold" />
 
         </LinearLayout>
@@ -38,36 +75,75 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/etPercentage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:background="#404040"
-            android:minEms="3"
-            android:textColor="@color/teal_700"
-            android:textSize="24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/btnAnimate"
-            app:layout_constraintStart_toEndOf="@+id/btnAnimate"
-            app:layout_constraintTop_toTopOf="@+id/btnAnimate" />
-
         <Button
-            android:id="@+id/btnAnimate"
+            android:id="@+id/btnAnimate25"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:text="Animate to"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Animate to 14%"
+            android:textAllCaps="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btnReset"
+            android:id="@+id/btnAnimate50"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Animate to 38%"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toEndOf="@+id/btnAnimate25"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnAnimate75"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Animate to 83%"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnAnimate25" />
+
+        <Button
+            android:id="@+id/btnAnimate100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Animate to 97%"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toEndOf="@+id/btnAnimate75"
+            app:layout_constraintTop_toBottomOf="@+id/btnAnimate50" />
+
+        <Button
+            android:id="@+id/btnChangeLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="8dp"
+            android:text="Change\nLimit"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toTopOf="@+id/btnReset"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnAnimate50"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
             android:text="Reset"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnAnimate" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAnimate75" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
