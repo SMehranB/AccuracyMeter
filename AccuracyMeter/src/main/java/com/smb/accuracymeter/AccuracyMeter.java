@@ -1,25 +1,28 @@
 package com.smb.accuracymeter;
 
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.core.graphics.ColorUtils;
 
 public class AccuracyMeter extends View {
 
     private final Paint linesPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint linesBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private LinearGradient gradient = null;
-    Path linesPath = new Path();
 
-    public int linesCount = 20;
-    private float[] points;
+    public int totalLinesCount = 30;
+    public int progress = 1;
+    private float[] totalLinesPoints;
 
 
     public AccuracyMeter(Context context) {
@@ -35,43 +38,60 @@ public class AccuracyMeter extends View {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
-        points = getLinesPoints();
+        totalLinesPoints = getLinesPoints(totalLinesCount);
 
         int[] colors = {Color.RED, ColorUtils.blendARGB(Color.RED, Color.YELLOW, 0.7f), Color.GREEN};
-        float[] colorPos = {dpToPixel(8), getWidth() / 2f, getWidth() - dpToPixel(8)};
         gradient = new LinearGradient(dpToPixel(8), 0f, getWidth() - dpToPixel(8), 0f, colors, null,Shader.TileMode.CLAMP);
 
-        linesPaint.setStrokeWidth(dpToPixel(8));
-        linesPaint.setStrokeCap(Paint.Cap.ROUND);
-        linesPaint.setStyle(Paint.Style.STROKE);
-        linesPaint.setColor(Color.RED);
-        linesPaint.setShader(gradient);
+        setLinesPaintParams(linesPaint);
+        setLinesBackgroundPaintParams(linesBackgroundPaint);
 
         super.onLayout(changed, left, top, right, bottom);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-
-
-        canvas.drawLines(points, linesPaint);
+        canvas.drawLines(totalLinesPoints, linesBackgroundPaint);
+        canvas.drawLines(totalLinesPoints, 0, progress * 4, linesPaint);
 
     }
 
     public void initAttributes(Context context, AttributeSet attributeSet) {
 
 
+
     }
 
-    private float[] getLinesPoints(){
+    public void animateProgressTo(float percentage) {
+
+        int progressLinesCount = (int) ((percentage / 100) * totalLinesCount);
+
+        ValueAnimator progressAnimation = ValueAnimator.ofInt(1, progressLinesCount);
+        progressAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                progress = (int) valueAnimator.getAnimatedValue();
+                invalidate();
+            }
+        });
+        progressAnimation.setDuration(2000);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(progressAnimation);
+        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorSet.start();
+    }
+
+    private float[] getLinesPoints(int linesCount){
 
         float[] points = new float[linesCount * 4];
+
         float yStart = getHeight() - dpToPixel(8);
-        float minYEnd = yStart - ((getHeight() - (dpToPixel(8) * 2)) * (20f / 100f));
-        float yDiff = ((getHeight() - (dpToPixel(8) * 2)) * (80f / 100f)) / linesCount;
+        float minYEnd = yStart - ((getHeight() - (dpToPixel(8) * 2)) * (5f / 100f));
+        float yDiff = ((getHeight() - (dpToPixel(8) * 2)) * (95f / 100f)) / linesCount;
 
         float lineX = dpToPixel(8);
-        float xOffSet = (getWidth() - dpToPixel(8)) / linesCount + 1;
+        float xOffSet = (getWidth() - dpToPixel(8)) / linesCount;
 
         for (int i = 0, index = 0; index < linesCount * 4; i++, index += 4) {
 
@@ -84,6 +104,20 @@ public class AccuracyMeter extends View {
         }
 
         return points;
+    }
+
+    private void setLinesBackgroundPaintParams(Paint paint) {
+        paint.setStrokeWidth(dpToPixel(8));
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setColor(Color.LTGRAY);
+        paint.setStyle(Paint.Style.STROKE);
+    }
+
+    private void setLinesPaintParams(Paint paint) {
+        paint.setStrokeWidth(dpToPixel(8));
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setShader(gradient);
     }
 
     private float dpToPixel(int dp) {
