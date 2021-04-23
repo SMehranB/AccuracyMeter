@@ -21,6 +21,8 @@
         <attr name="am_linesWidth" format="dimension"/>
 
         <attr name="am_animationDuration" format="integer" />
+
+        <attr name="am_backgroundAlpha" format="float" />
     </declare-styleable>
 
 </resources>

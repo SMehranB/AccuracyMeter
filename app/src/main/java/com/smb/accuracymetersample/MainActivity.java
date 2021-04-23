@@ -18,9 +18,11 @@ public class MainActivity extends AppCompatActivity {
 
         AccuracyMeter am = findViewById(R.id.am);
         Button button = findViewById(R.id.btnAnimate);
+        Button buttonReset = findViewById(R.id.btnReset);
         EditText editText = findViewById(R.id.etPercentage);
 
         button.setOnClickListener(view -> am.animateProgressTo(Integer.parseInt(editText.getText().toString())));
+        buttonReset.setOnClickListener(view -> am.reset());
 
 
 

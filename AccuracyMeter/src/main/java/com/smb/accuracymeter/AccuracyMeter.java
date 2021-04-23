@@ -2,6 +2,7 @@ package com.smb.accuracymeter;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -25,15 +26,16 @@ public class AccuracyMeter extends View {
     private final TextPaint textPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG | TextPaint.SUBPIXEL_TEXT_FLAG);
     private LinearGradient mainGradient = null;
     private LinearGradient backgroundGradient = null;
-    private float[] totalLinesPoints;
 
+    private float[] totalLinesPoints;
     public int totalLinesCount = 30;
     public int progress = 0;
-    long animationDuration = 1000;
-
     public float lineWidth = dpToPixel(8);
-
     public float innerPadding = dpToPixel(8);
+
+    public float backgroundAlpha = 0.5f;
+
+    public long animationDuration = 1000;
 
     private float textX = 0f;
     private float textY = 0f;
@@ -42,11 +44,21 @@ public class AccuracyMeter extends View {
     public boolean percentageEnabled = true;
     public float textSize = dpToPixel(16);
     public int textStyle = 0;
-    private int fontFamily = 0;
+    public int fontFamily = 0;
     public int textColor = Color.BLACK;
     public int textPosition = 0; //bottom_left
 
-    public void initAttributes(Context context, AttributeSet attributeSet) {
+    public AccuracyMeter(Context context) {
+        super(context);
+        initAttributes(context, null);
+    }
+
+    public AccuracyMeter(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initAttributes(context, attrs);
+    }
+
+    private void initAttributes(Context context, AttributeSet attributeSet) {
 
         TypedArray attrs = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.AccuracyMeter, 0, 0);
 
@@ -61,21 +73,21 @@ public class AccuracyMeter extends View {
         textColor = attrs.getInteger(R.styleable.AccuracyMeter_am_textColor, Color.BLACK);
         textPosition = attrs.getInt(R.styleable.AccuracyMeter_am_textPosition, 0);
 
+        backgroundAlpha = Math.min(attrs.getFloat(R.styleable.AccuracyMeter_am_backgroundAlpha, 0.5f), 1f);
+
+
         attrs.recycle();
-
     }
 
-    public AccuracyMeter(Context context) {
-        super(context);
-        initAttributes(context, null);
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.drawLines(totalLinesPoints, linesBackgroundPaint);
+        canvas.drawLines(totalLinesPoints, 0, progress * 4, linesPaint);
+        if (percentageEnabled) {
+            canvas.drawText(text, textX, textY, textPaint);
+        }
     }
 
-    public AccuracyMeter(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initAttributes(context, attrs);
-    }
-
-/*
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
@@ -84,10 +96,7 @@ public class AccuracyMeter extends View {
 
         int hMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        int textHeight = (int) (textPaint.descent() - textPaint.ascent());
-        int highlightHeight = (int) (highlightPaint.descent() - highlightPaint.ascent());
-
-        int minHeight = (int) (Math.max(textHeight, highlightHeight) + verticalPadding * 2 + shadowOffSetY);
+        int minHeight = (int) (textHeight + innerPadding * 3 + dpToPixel(100));
 
         switch (hMode) {
             case MeasureSpec.EXACTLY:
@@ -101,20 +110,22 @@ public class AccuracyMeter extends View {
                 break;
         }
     }
-*/
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
         int[] mainColors = {Color.RED, ColorUtils.blendARGB(Color.RED, Color.YELLOW, 0.7f), Color.GREEN};
-        int[] backgroundColors = {ColorUtils.blendARGB(Color.RED, Color.WHITE, 0.8f),
-                ColorUtils.blendARGB(Color.GREEN, Color.WHITE, 0.8f)};
+        int[] backgroundColors = {ColorUtils.blendARGB( Color.TRANSPARENT, Color.RED, backgroundAlpha),
+                ColorUtils.blendARGB(Color.TRANSPARENT, Color.GREEN, backgroundAlpha)};
 
-        mainGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f, mainColors, null,Shader.TileMode.CLAMP);
-        backgroundGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f, backgroundColors, null,Shader.TileMode.CLAMP);
+        mainGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f,
+                mainColors, null,Shader.TileMode.CLAMP);
+        backgroundGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f,
+                backgroundColors, null,Shader.TileMode.CLAMP);
 
-        setLinesPaintParams(linesPaint);
-        setLinesBackgroundPaintParams(linesBackgroundPaint);
+        setLinesPaintParams();
+        setLinesBackgroundPaintParams();
 
         setTextParams();
         setTextPosition();
@@ -123,16 +134,6 @@ public class AccuracyMeter extends View {
 
         super.onLayout(changed, left, top, right, bottom);
     }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.drawLines(totalLinesPoints, linesBackgroundPaint);
-        canvas.drawLines(totalLinesPoints, 0, progress * 4, linesPaint);
-        if (percentageEnabled) {
-            canvas.drawText(text, textX, textY, textPaint);
-        }
-    }
-
 
     public void animateProgressTo(float percentage) {
 
@@ -154,6 +155,13 @@ public class AccuracyMeter extends View {
         animatorSet.play(progressAnimation);
         animatorSet.setInterpolator(new DecelerateInterpolator());
         animatorSet.start();
+    }
+
+    public void reset() {
+        text = "0%";
+        progress = 0;
+
+        invalidate();
     }
 
     private float[] getLinesPoints(int linesCount) {
@@ -201,7 +209,7 @@ public class AccuracyMeter extends View {
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);
         textPaint.setTypeface(Typeface.defaultFromStyle(textStyle));
-
+//        textPaint.setShadowLayer(10f, 15f, 15f, Color.GRAY);
         if (fontFamily != 0) {
             Typeface font = ResourcesCompat.getFont(getContext(), fontFamily);
             textPaint.setTypeface(Typeface.create(font, textStyle));
@@ -212,19 +220,21 @@ public class AccuracyMeter extends View {
         }
     }
 
-    private void setLinesBackgroundPaintParams(Paint paint) {
-        paint.setStrokeWidth(lineWidth);
-        paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setColor(Color.LTGRAY);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setShader(backgroundGradient);
+    private void setLinesBackgroundPaintParams() {
+        linesBackgroundPaint.setStrokeWidth(lineWidth);
+        linesBackgroundPaint.setStrokeCap(Paint.Cap.ROUND);
+        linesBackgroundPaint.setColor(Color.LTGRAY);
+        linesBackgroundPaint.setStyle(Paint.Style.STROKE);
+        linesBackgroundPaint.setShader(backgroundGradient);
     }
 
-    private void setLinesPaintParams(Paint paint) {
-        paint.setStrokeWidth(lineWidth);
-        paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setShader(mainGradient);
+    private void setLinesPaintParams() {
+        linesPaint.setStrokeWidth(lineWidth);
+        linesPaint.setStrokeCap(Paint.Cap.ROUND);
+        linesPaint.setStyle(Paint.Style.STROKE);
+        linesPaint.setShader(mainGradient);
+
+        linesPaint.setShadowLayer(10f, 15f, 15f, ColorUtils.blendARGB(Color.GRAY, Color.TRANSPARENT, 0.5f));
     }
 
     private float dpToPixel(int dp) {

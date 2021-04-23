@@ -5,26 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/black"
     tools:context=".MainActivity">
 
     <com.smb.accuracymeter.AccuracyMeter
         android:id="@+id/am"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginVertical="8dp"
-        app:am_textColor="@color/teal_200"
-        app:am_textPosition="BOTTOM_RIGHT"
-        app:am_textSize="32dp"
-        app:am_textFont="@font/lobster_regular"
+        app:am_textPosition="BOTTOM_LEFT"
+        app:am_textColor="@color/white"
+        app:am_textSize="24dp"
         app:am_textStyle="bold" />
 
     <EditText
         android:id="@+id/etPercentage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#404040"
         android:layout_marginHorizontal="16dp"
-        android:textColor="@color/black"
+        android:textColor="@color/teal_700"
         android:textSize="24dp" />
 
     <Button
@@ -33,4 +34,11 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:text="Animate to" />
+
+    <Button
+        android:id="@+id/btnReset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:text="Reset" />
 </LinearLayout>
