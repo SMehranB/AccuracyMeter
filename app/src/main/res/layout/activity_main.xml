@@ -27,6 +27,7 @@
                 app:am_animationDuration="2000"
                 app:am_linesCount="100"
                 app:am_linesWidth="5dp"
+                app:am_backgroundAlpha="0.5"
                 app:am_ThresholdIndicatorEnabled="false"
                 app:am_ProgressTextEnabled="false"/>
 
@@ -41,10 +42,10 @@
                 app:am_Threshold="75"
                 app:am_linesCount="25"
                 app:am_linesWidth="10dp"
-                app:am_textColor="@color/white"
-                app:am_textPosition="BOTTOM_RIGHT"
-                app:am_textSize="24dp"
-                app:am_textStyle="bold" />
+                app:am_ProgressTextColor="@color/white"
+                app:am_ProgressTextPosition="BOTTOM_RIGHT"
+                app:am_ProgressTextSize="24dp"
+                app:am_ProgressTextStyle="bold" />
 
             <com.smb.accuracymeter.AccuracyMeter
                 android:id="@+id/am3"
@@ -55,10 +56,10 @@
                 app:am_animationDuration="1000"
                 app:am_ThresholdIndicatorColor="#41FFF9"
                 app:am_Threshold="50"
-                app:am_textColor="#41FFF9"
-                app:am_textPosition="BOTTOM_RIGHT"
-                app:am_textSize="16dp"
-                app:am_textStyle="bold" />
+                app:am_ProgressTextColor="#41FFF9"
+                app:am_ProgressTextPosition="BOTTOM_RIGHT"
+                app:am_ProgressTextSize="16dp"
+                app:am_ProgressTextStyle="bold" />
 
         </LinearLayout>
 

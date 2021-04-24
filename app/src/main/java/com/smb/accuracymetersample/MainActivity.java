@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         accuracyMeter.setLayoutParams(params);
-        accuracyMeter.ProgressTextEnabled = true;
-        accuracyMeter.thresholdEnabled = true;
+        accuracyMeter.setProgressTextEnabled(true);
+        accuracyMeter.setThresholdRangeEnabled(true);
         accuracyMeter.setThresholdIndicatorColor(Color.YELLOW);
         accuracyMeter.setTextColor(Color.YELLOW);
         accuracyMeter.setTextPosition(AccuracyMeter.TextPosition.BOTTOM_LEFT);

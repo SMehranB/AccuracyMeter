@@ -75,16 +75,16 @@ public class AccuracyMeter extends View {
         animationDuration = attrs.getInt(R.styleable.AccuracyMeter_am_animationDuration, 1000);
 
         ProgressTextEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_ProgressTextEnabled, true);
-        textSize = attrs.getDimension(R.styleable.AccuracyMeter_am_textSize, dpToPixel(16));
-        textStyle = attrs.getInt(R.styleable.AccuracyMeter_am_textStyle, Typeface.NORMAL);
-        fontFamily = attrs.getResourceId(R.styleable.AccuracyMeter_am_textFont, 0);
-        textColor = attrs.getInteger(R.styleable.AccuracyMeter_am_textColor, Color.BLACK);
-        textPosition = getTextPosition(attrs.getInt(R.styleable.AccuracyMeter_am_textPosition, 0));
+        textSize = attrs.getDimension(R.styleable.AccuracyMeter_am_ProgressTextSize, dpToPixel(16));
+        textStyle = attrs.getInt(R.styleable.AccuracyMeter_am_ProgressTextStyle, Typeface.NORMAL);
+        fontFamily = attrs.getResourceId(R.styleable.AccuracyMeter_am_ProgressTextFont, 0);
+        textColor = attrs.getInteger(R.styleable.AccuracyMeter_am_ProgressTextColor, Color.DKGRAY);
+        textPosition = getTextPosition(attrs.getInt(R.styleable.AccuracyMeter_am_ProgressTextPosition, 0));
 
         backgroundAlpha = Math.min(attrs.getFloat(R.styleable.AccuracyMeter_am_backgroundAlpha, 0.5f), 1f);
 
         thresholdEnabled = attrs.getBoolean(R.styleable.AccuracyMeter_am_ThresholdIndicatorEnabled, true);
-        thresholdIndicatorColor = attrs.getInteger(R.styleable.AccuracyMeter_am_ThresholdIndicatorColor, Color.BLACK);
+        thresholdIndicatorColor = attrs.getInteger(R.styleable.AccuracyMeter_am_ThresholdIndicatorColor, Color.GRAY);
         threshold = attrs.getFloat(R.styleable.AccuracyMeter_am_Threshold, 70f);
 
         attrs.recycle();

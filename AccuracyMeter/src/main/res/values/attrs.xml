@@ -4,16 +4,15 @@
     <declare-styleable name="AccuracyMeter">
 
         <attr name="am_ProgressTextEnabled" format="boolean"/>
-        <attr name="am_text" format="string"/>
-        <attr name="am_textSize" format="dimension"/>
-        <attr name="am_textColor" format="color"/>
-        <attr name="am_textFont" format="reference"/>
-        <attr name="am_textStyle" format="flags">
+        <attr name="am_ProgressTextSize" format="dimension"/>
+        <attr name="am_ProgressTextColor" format="color"/>
+        <attr name="am_ProgressTextFont" format="reference"/>
+        <attr name="am_ProgressTextStyle" format="flags">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="am_textPosition" format="enum">
+        <attr name="am_ProgressTextPosition" format="enum">
             <enum name="BOTTOM_LEFT" value="0"/>
             <enum name="BOTTOM_RIGHT" value="1"/>
         </attr>
