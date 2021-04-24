@@ -16,8 +16,8 @@
  
 
 ## Screen recording
- 
- <img src="./screen_recording.gif" height="600"> <img src="./screen_recording2.gif" height="150">
+ <img src="./screen_recording2.gif" height="150">
+ <img src="./screen_recording.gif" height="600">
  
 # Install
  
