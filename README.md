@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/SMehranB/AccuracyMeter.svg)](https://jitpack.io/#SMehranB/AccuracyMeter)
+
 # Accuracy Meter
 
 ## A beautiful meter to show the accuracy of user's actions such as speech recognition or performance in a game etc. 
