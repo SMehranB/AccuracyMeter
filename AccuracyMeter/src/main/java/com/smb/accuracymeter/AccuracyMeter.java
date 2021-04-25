@@ -88,15 +88,14 @@ public class AccuracyMeter extends View {
         threshold = attrs.getFloat(R.styleable.AccuracyMeter_am_Threshold, 70f);
 
         attrs.recycle();
+
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
 
-        setLayerType(LAYER_TYPE_SOFTWARE, linesPaint);
-
         canvas.drawLines(linesPoints, linesBackgroundPaint);
-        canvas.drawLines(linesPoints, 0, progress * 4, linesPaint);
 
         if (thresholdEnabled) {
             Path limiterPath = getThresholdPath(threshold);
@@ -106,6 +105,8 @@ public class AccuracyMeter extends View {
         if (ProgressTextEnabled) {
             canvas.drawText(text, textX, textY, textPaint);
         }
+
+        canvas.drawLines(linesPoints, 0, progress * 4, linesPaint);
     }
 
     @Override
