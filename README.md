@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/SMehranB/AccuracyMeter.svg)](https://jitpack.io/#SMehranB/AccuracyMeter)
+
 
 # Accuracy Meter
 
