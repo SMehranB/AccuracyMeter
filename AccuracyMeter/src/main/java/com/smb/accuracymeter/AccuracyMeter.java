@@ -93,6 +93,8 @@ public class AccuracyMeter extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
+        setLayerType(LAYER_TYPE_SOFTWARE, linesPaint);
+
         canvas.drawLines(linesPoints, linesBackgroundPaint);
         canvas.drawLines(linesPoints, 0, progress * 4, linesPaint);
 
