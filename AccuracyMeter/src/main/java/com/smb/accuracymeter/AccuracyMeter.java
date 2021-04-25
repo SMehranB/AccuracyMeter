@@ -136,15 +136,6 @@ public class AccuracyMeter extends View {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
-        int[] mainColors = {Color.RED, ColorUtils.blendARGB(Color.RED, Color.YELLOW, 0.7f), Color.GREEN};
-        int[] backgroundColors = {ColorUtils.blendARGB( Color.TRANSPARENT, Color.RED, backgroundAlpha),
-                ColorUtils.blendARGB(Color.TRANSPARENT, Color.GREEN, backgroundAlpha)};
-
-        mainGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f,
-                mainColors, null,Shader.TileMode.CLAMP);
-        backgroundGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f,
-                backgroundColors, null,Shader.TileMode.CLAMP);
-
         setLinesPaintParams();
         setLinesBackgroundPaintParams();
 
@@ -266,12 +257,12 @@ public class AccuracyMeter extends View {
     private void setTextPosition() {
 
         switch (textPosition) {
-            case BOTTOM_LEFT:{ //BOTTOM_LEFT
+            case BOTTOM_LEFT:{
                 textX = innerPadding;
                 textY = getHeight() - innerPadding;
                 break;
             }
-            case BOTTOM_RIGHT:{ //BOTTOM_RIGHT
+            case BOTTOM_RIGHT:{
                 textX = getWidth() - innerPadding - textPaint.measureText("100%");
                 textY = getHeight() - innerPadding;
                 break;
@@ -300,6 +291,11 @@ public class AccuracyMeter extends View {
         linesBackgroundPaint.setStrokeCap(Paint.Cap.ROUND);
         linesBackgroundPaint.setColor(Color.LTGRAY);
         linesBackgroundPaint.setStyle(Paint.Style.STROKE);
+
+        int[] backgroundColors = {ColorUtils.blendARGB( Color.TRANSPARENT, Color.RED, backgroundAlpha),
+                ColorUtils.blendARGB(Color.TRANSPARENT, Color.GREEN, backgroundAlpha)};
+        backgroundGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f,
+                backgroundColors, null,Shader.TileMode.CLAMP);
         linesBackgroundPaint.setShader(backgroundGradient);
     }
 
@@ -307,8 +303,12 @@ public class AccuracyMeter extends View {
         linesPaint.setStrokeWidth(lineWidth);
         linesPaint.setStrokeCap(Paint.Cap.ROUND);
         linesPaint.setStyle(Paint.Style.STROKE);
-        linesPaint.setShader(mainGradient);
 
+        int[] mainColors = {Color.RED, ColorUtils.blendARGB(Color.RED, Color.YELLOW, 0.7f), Color.GREEN};
+        mainGradient = new LinearGradient(innerPadding, 0f, getWidth() - innerPadding, 0f,
+                mainColors, null,Shader.TileMode.CLAMP);
+
+        linesPaint.setShader(mainGradient);
         linesPaint.setShadowLayer(10f, 15f, 15f, ColorUtils.blendARGB(Color.GRAY, Color.TRANSPARENT, 0.5f));
     }
 
@@ -322,7 +322,9 @@ public class AccuracyMeter extends View {
 
     public void setLineCount(int totalLinesCount) {
         this.totalLinesCount = totalLinesCount;
-        requestLayout();
+        linesPoints = getLinesPoints(totalLinesCount);
+        progress = 0;
+        invalidate();
     }
 
     public float getLineWidthDp() {
@@ -331,6 +333,8 @@ public class AccuracyMeter extends View {
 
     public void setLineWidthDp(int lineWidth) {
         this.lineWidth = dpToPixel(lineWidth);
+        setLinesBackgroundPaintParams();
+        setLinesPaintParams();
         invalidate();
     }
 
@@ -402,7 +406,8 @@ public class AccuracyMeter extends View {
 
     public void setTextSizeDp(int textSize) {
         this.textSize = dpToPixel(textSize);
-        requestLayout();
+        setTextParams();
+        invalidate();
     }
 
     public int getTextStyle() {
@@ -411,7 +416,8 @@ public class AccuracyMeter extends View {
 
     public void setTextStyle(int textStyle) {
         this.textStyle = textStyle;
-        requestLayout();
+        setTextParams();
+        invalidate();
     }
 
     public int getFontFamily() {
@@ -420,7 +426,8 @@ public class AccuracyMeter extends View {
 
     public void setFontFamily(int fontFamily) {
         this.fontFamily = fontFamily;
-        requestLayout();
+        setTextParams();
+        invalidate();
     }
 
     public int getTextColor() {
@@ -429,6 +436,7 @@ public class AccuracyMeter extends View {
 
     public void setTextColor(int textColor) {
         this.textColor = textColor;
+        setTextParams();
         invalidate();
     }
 
@@ -438,6 +446,7 @@ public class AccuracyMeter extends View {
 
     public void setTextPosition(TextPosition textPosition) {
         this.textPosition = textPosition;
+        setTextPosition();
         invalidate();
     }
 }
