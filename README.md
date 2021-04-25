@@ -35,7 +35,7 @@ allprojects {
 
 ```groovy
 dependencies {
-	 implementation 'com.github.SMehranB:AccuracyMeter:1.0.0'
+	 implementation 'com.github.SMehranB:AccuracyMeter:1.0.1'
 }
 ```
 ## Maven
@@ -43,7 +43,7 @@ dependencies {
 <dependency>
 	<groupId>com.github.SMehranB</groupId>
 	<artifactId>AccuracyMeter</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 </dependency>
  ```
 # Use
