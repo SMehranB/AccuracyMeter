@@ -1,4 +1,4 @@
-
+[![](https://jitpack.io/v/SMehranB/AccuracyMeter.svg)](https://jitpack.io/#SMehranB/AccuracyMeter)
 
 # Accuracy Meter
 
@@ -35,15 +35,16 @@ allprojects {
 
 ```groovy
 dependencies {
-	 implementation 'com.github.SMehranB:AccuracyMeter:1.0.2'
+	 implementation 'com.github.SMehranB:AccuracyMeter:1.0.3'
 }
 ```
+
 ## Maven
 ```xml
 <dependency>
 	<groupId>com.github.SMehranB</groupId>
 	<artifactId>AccuracyMeter</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 </dependency>
  ```
 # Use

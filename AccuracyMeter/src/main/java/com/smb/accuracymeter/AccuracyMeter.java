@@ -397,7 +397,7 @@ public class AccuracyMeter extends View {
 
     public void setProgressTextEnabled(boolean percentageEnabled) {
         this.ProgressTextEnabled = percentageEnabled;
-        invalidate();
+        requestLayout();
     }
 
     public float getTextSizeDp() {
@@ -406,8 +406,7 @@ public class AccuracyMeter extends View {
 
     public void setTextSizeDp(int textSize) {
         this.textSize = dpToPixel(textSize);
-        setTextParams();
-        invalidate();
+        requestLayout();
     }
 
     public int getTextStyle() {
@@ -416,8 +415,7 @@ public class AccuracyMeter extends View {
 
     public void setTextStyle(int textStyle) {
         this.textStyle = textStyle;
-        setTextParams();
-        invalidate();
+        requestLayout();
     }
 
     public int getFontFamily() {
@@ -426,8 +424,7 @@ public class AccuracyMeter extends View {
 
     public void setFontFamily(int fontFamily) {
         this.fontFamily = fontFamily;
-        setTextParams();
-        invalidate();
+        requestLayout();
     }
 
     public int getTextColor() {
